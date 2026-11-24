@@ -8,11 +8,16 @@
 
     <meta
         name="description"
-        content="AmmG – kompletní řešení moderních skladů. Návrh, regálové systémy,paletovéregály, policové regály, konzolové regály, pojezdové regály, válečkové dráhy, montáž, servis, pozemní i prostorové  bezpečnostní značení, bezpečnost, řezání indukčních spár, revize a digitální řízení skladu systémem Lagermann WMS."
+        content="AmmG navrhuje a realizuje sklady na klíč. Regály, dopravníky, montáž, bezpečnostní značení, revize a digitální řízení skladu s Lagermann WMS."
     >
     <meta name="robots" content="index,follow">
     <meta name="author" content="AmmG spol. s r.o.">
     <link rel="canonical" href="https://www.ammg.cz/">
+    <link rel="alternate" hreflang="cs" href="https://www.ammg.cz/">
+    <link rel="alternate" hreflang="en" href="https://www.ammg.cz/en/">
+    <link rel="alternate" hreflang="de" href="https://www.ammg.cz/de/">
+    <link rel="alternate" hreflang="x-default" href="https://www.ammg.cz/">
+    <meta name="google-site-verification" content="x3cl3QRL3v19oIvD9lCCKHyZ5GCrJJEb1slQcTj2vuA">
 
     <meta property="og:title" content="AmmG | Moderní sklady kompletně na klíč">
     <meta
@@ -22,7 +27,10 @@
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.ammg.cz/">
     <meta property="og:image" content="https://www.ammg.cz/img/hero-sklad.png">
+    <meta property="og:image:alt" content="Moderní automatizovaný sklad s regály a dopravníkovou technologií">
     <meta property="og:locale" content="cs_CZ">
+    <meta property="og:locale:alternate" content="en_GB">
+    <meta property="og:locale:alternate" content="de_DE">
 
     <link rel="icon" href="img/favicon.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -30,17 +38,12 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
         rel="stylesheet"
-
-    google-site-verification: google214ffce362ace467.html
-
-        <meta name="google-site-verification" content="x3cl3QRL3v19oIvD9lCCKHyZ5GCrJJEb1slQcTj2vuA" />
     >
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
-    <body id="top"></body>
-    <header class="site-header" id="top">
+<body id="top">
+    <header class="site-header">
         <div class="container header-inner">
             <a class="brand" href="#top" aria-label="AmmG – domů">
                 <span class="brand-mark">A</span>
@@ -68,11 +71,19 @@
                     Nezávazná poptávka
                 </a>
 
+                <nav class="language-switch" aria-label="Výběr jazyka">
+                    <a href="/" lang="cs" hreflang="cs" aria-label="Čeština" aria-current="page">CZ</a>
+                    <a href="/en/" lang="en" hreflang="en" aria-label="English">EN</a>
+                    <a href="/de/" lang="de" hreflang="de" aria-label="Deutsch">DE</a>
+                </nav>
+
                 <button
                     class="menu-toggle"
                     id="menuToggle"
                     type="button"
                     aria-label="Otevřít menu"
+                    data-open-label="Otevřít menu"
+                    data-close-label="Zavřít menu"
                     aria-expanded="false"
                     aria-controls="siteNav"
                 >
@@ -644,7 +655,26 @@
                     </div>
                 </div>
 
-                <form class="contact-form" action="contact.php" method="post">
+                <form
+                    class="contact-form"
+                    action="contact.php"
+                    method="post"
+                    data-required-message="Vyplňte prosím toto pole."
+                    data-email-message="Zadejte prosím platnou e-mailovou adresu."
+                    data-consent-message="Pro odeslání poptávky potvrďte souhlas se zpracováním údajů."
+                >
+                    <input type="hidden" name="lang" value="cs">
+
+                    <p class="form-status form-status-success full" id="contact-sent" role="status" tabindex="-1">
+                        Děkujeme za poptávku. Ozveme se vám co nejdříve.
+                    </p>
+                    <p class="form-status form-status-error full" id="contact-invalid" role="alert" tabindex="-1">
+                        Zkontrolujte prosím povinné údaje, e-mailovou adresu a souhlas se zpracováním údajů.
+                    </p>
+                    <p class="form-status form-status-error full" id="contact-error" role="alert" tabindex="-1">
+                        Poptávku se nepodařilo odeslat. Zkuste to prosím znovu nebo nám napište na info@ammg.cz.
+                    </p>
+
                     <label>
                         Jméno a příjmení
                         <input type="text" name="name" autocomplete="name" required>

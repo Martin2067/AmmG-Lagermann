@@ -1,66 +1,56 @@
 <?php
 declare(strict_types=1);
 
-// contact.php
+$languages = [
+    'cs' => ['path' => '/', 'label' => 'čeština (cs)'],
+    'en' => ['path' => '/en/', 'label' => 'angličtina (en)'],
+    'de' => ['path' => '/de/', 'label' => 'němčina (de)'],
+];
 
-if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: index.html');
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+    header('Location: ' . $languages['cs']['path'], true, 303);
     exit;
 }
 
-/*
-|--------------------------------------------------------------------------
-| Honeypot ochrana proti robotům
-|--------------------------------------------------------------------------
-*/
+$requestedLanguage = $_POST['lang'] ?? '';
+$language = is_string($requestedLanguage) && isset($languages[$requestedLanguage])
+    ? $languages[$requestedLanguage]
+    : $languages['cs'];
+
+function redirectToForm(string $path, string $result): void
+{
+    header('Location: ' . $path . $result, true, 303);
+    exit;
+}
+
+$success = '?sent=1#contact-sent';
+$invalid = '?error=1#contact-invalid';
 
 if (!empty($_POST['website'] ?? '')) {
-    header('Location: index.html?sent=1');
-    exit;
+    redirectToForm($language['path'], $success);
 }
 
-/*
-|--------------------------------------------------------------------------
-| Načtení formulářových údajů
-|--------------------------------------------------------------------------
-*/
-
-$name          = trim($_POST['name'] ?? '');
-$company       = trim($_POST['company'] ?? '');
-$email         = trim($_POST['email'] ?? '');
-$phone         = trim($_POST['phone'] ?? '');
-$warehouseSize = trim($_POST['warehouse_size'] ?? '');
-$requestType   = trim($_POST['request_type'] ?? '');
-$message       = trim($_POST['message'] ?? '');
-
-/*
-|--------------------------------------------------------------------------
-| Kontrola povinných údajů
-|--------------------------------------------------------------------------
-*/
-
-if ($name === '' || $email === '' || $message === '') {
-    header('Location: index.html?error=1#kontakt');
-    exit;
+$fields = [];
+foreach (['name', 'company', 'email', 'phone', 'warehouse_size', 'request_type', 'message', 'gdpr'] as $field) {
+    $value = $_POST[$field] ?? '';
+    if (!is_string($value)) {
+        redirectToForm($language['path'], $invalid);
+    }
+    $fields[$field] = trim($value);
 }
 
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    header('Location: index.html?error=1#kontakt');
-    exit;
-}
-
-/*
-|--------------------------------------------------------------------------
-| Ochrana hlavičky Reply-To
-|--------------------------------------------------------------------------
-*/
+$name = $fields['name'];
+$company = $fields['company'];
+$email = $fields['email'];
+$phone = $fields['phone'];
+$message = $fields['message'];
 
 if (
-    preg_match('/[\r\n]/', $email) ||
-    preg_match('/[\r\n]/', $name)
+    $name === '' || $message === '' || $fields['gdpr'] !== 'on'
+    || !filter_var($email, FILTER_VALIDATE_EMAIL)
+    || preg_match('/[\r\n]/', $email) || preg_match('/[\r\n]/', $name)
 ) {
-    header('Location: index.html?error=1#kontakt');
-    exit;
+    redirectToForm($language['path'], $invalid);
 }
 
 /*
@@ -88,6 +78,15 @@ $requestTypes = [
     'jine'              => 'Jiné řešení',
 ];
 
+$warehouseSize = $fields['warehouse_size'];
+$requestType = $fields['request_type'];
+if (
+    ($warehouseSize !== '' && !isset($warehouseSizes[$warehouseSize]))
+    || ($requestType !== '' && !isset($requestTypes[$requestType]))
+) {
+    redirectToForm($language['path'], $invalid);
+}
+
 $warehouseSizeLabel = $warehouseSizes[$warehouseSize] ?? 'Neuvedeno';
 $requestTypeLabel   = $requestTypes[$requestType] ?? 'Neuvedeno';
 
@@ -98,7 +97,7 @@ $requestTypeLabel   = $requestTypes[$requestType] ?? 'Neuvedeno';
 */
 
 $to      = 'info@ammg.cz';
-$subject = 'Nová poptávka z webu AmmG';
+$subject = '=?UTF-8?B?' . base64_encode('Nová poptávka z webu AmmG') . '?=';
 
 $body  = "NOVÁ POPTÁVKA Z WEBU AMMG\n";
 $body .= "================================\n\n";
@@ -108,6 +107,7 @@ $body .= "Firma: " . ($company !== '' ? $company : 'Neuvedeno') . "\n";
 $body .= "E-mail: {$email}\n";
 $body .= "Telefon: " . ($phone !== '' ? $phone : 'Neuvedeno') . "\n\n";
 
+$body .= "Jazyk poptávky: {$language['label']}\n";
 $body .= "Velikost skladu: {$warehouseSizeLabel}\n";
 $body .= "Typ požadavku: {$requestTypeLabel}\n\n";
 
@@ -135,7 +135,7 @@ $headers = [
 |--------------------------------------------------------------------------
 */
 
-$sent = mail(
+$sent = @mail(
     $to,
     $subject,
     $body,
@@ -143,9 +143,8 @@ $sent = mail(
 );
 
 if (!$sent) {
-    header('Location: index.html?error=mail#kontakt');
-    exit;
+    error_log('AmmG contact: mail() failed');
+    redirectToForm($language['path'], '?error=mail#contact-error');
 }
 
-header('Location: index.html?sent=1#kontakt');
-exit;
+redirectToForm($language['path'], $success);
