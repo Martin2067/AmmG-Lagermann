@@ -809,37 +809,49 @@ p {
     color: #d9edff;
 }
 
+.lagermann-section {
+    background: linear-gradient(150deg, var(--blue-100), var(--white) 70%);
+}
+
 .lagermann-grid {
     display: grid;
-    grid-template-columns: 1.08fr 0.92fr;
-    gap: 72px;
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    gap: clamp(32px, 5vw, 72px);
     align-items: center;
 }
 
 .lagermann-image {
-    position: relative;
-    min-height: 530px;
+    margin: 0;
     overflow: hidden;
-    border-radius: 24px;
+    border: 1px solid rgba(6, 24, 43, 0.12);
+    border-radius: 26px;
+    background: var(--navy-900);
     box-shadow: var(--shadow-md);
 }
 
-.lagermann-image img {
+.lagermann-scene {
+    position: relative;
+}
+
+.lagermann-photo {
     width: 100%;
-    height: 100%;
-    min-height: 530px;
-    object-fit: cover;
+    height: auto;
+}
+
+/* Match the four corners of the tablet display in the warehouse photo. */
+.lagermann-screen {
+    position: absolute;
+    top: 37.55%;
+    left: 38.47%;
+    width: 44.9%;
+    height: 36.5%;
+    clip-path: polygon(1.2% 0, 100% 1%, 99.5% 100%, 0 98.5%);
 }
 
 .lagermann-image-label {
-    position: absolute;
-    right: 22px;
-    bottom: 22px;
-    left: 22px;
-    padding: 19px 22px;
-    border-radius: 15px;
+    padding: 16px clamp(18px, 3vw, 26px);
+    border-top: 3px solid var(--orange-500);
     color: var(--white);
-    background: rgba(6, 24, 43, 0.91);
 }
 
 .lagermann-image-label strong,
@@ -853,8 +865,21 @@ p {
 
 .lagermann-image-label span {
     margin-top: 4px;
-    color: #c7d8e8;
-    font-size: 12px;
+    color: #c7e5ff;
+    font-size: 13px;
+}
+
+.lagermann-logo {
+    width: min(100%, 244px);
+    height: auto;
+    margin-bottom: 20px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--white);
+}
+
+.lagermann-copy h2 {
+    color: var(--navy-900);
 }
 
 .lagermann-copy > p:not(.eyebrow) {
@@ -922,21 +947,26 @@ p {
     line-height: 1.55;
 }
 
-.partner-card {
+#partner .partner-card {
     padding: 46px 50px;
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
     align-items: center;
-    justify-content: space-between;
-    gap: 34px;
+    gap: clamp(28px, 5vw, 64px);
     border: 1px solid var(--line);
     border-radius: 22px;
     background: var(--white);
     box-shadow: var(--shadow-sm);
 }
 
-.partner-copy p:not(.eyebrow) {
-    max-width: 720px;
-    margin-bottom: 0;
+#partner .partner-logo {
+    width: min(100%, 480px);
+    height: auto;
+    justify-self: center;
+}
+
+#partner .partner-copy p:not(.eyebrow) {
+    margin-bottom: 24px;
     color: var(--muted);
     line-height: 1.75;
 }
@@ -1209,9 +1239,8 @@ p {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .partner-card {
-        align-items: flex-start;
-        flex-direction: column;
+    #partner .partner-card {
+        grid-template-columns: minmax(0, 1fr);
     }
 
     .footer-grid {
@@ -1320,10 +1349,16 @@ p {
     }
 
     .intro-image,
-    .intro-image img,
-    .lagermann-image,
-    .lagermann-image img {
+    .intro-image img {
         min-height: 330px;
+    }
+
+    .lagermann-grid {
+        gap: 30px;
+    }
+
+    .lagermann-image {
+        border-radius: 18px;
     }
 
     .service-image-wrap {
@@ -1357,8 +1392,9 @@ p {
         width: 100%;
     }
 
-    .partner-card {
+    #partner .partner-card {
         padding: 30px 24px;
+        gap: 24px;
     }
 
     .contact-form {
